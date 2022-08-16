@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 
 // database;
 import './database/connection';
@@ -6,6 +6,18 @@ import { UserModel } from './database';
 
 // App name
 const app = express();
+
+
+// API
+import Auth from './API/Auth/index';
+
+
+// middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// SetRouter
+app.use("/auth",Auth);
 
 // Router
 app.get("/",(req,res)=>{
