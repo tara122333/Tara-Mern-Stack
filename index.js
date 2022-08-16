@@ -8,10 +8,7 @@ Front-end ==>
                                                     4 - SignIn
                                                     5 - SignUp
                                         private ==>
-                                                    1 - Logo
-                                                    2 - Home
-                                                    3 - About
-                                                    4 - Profile ==> 
+                                                    1 - Profile ==> 
                                                                     1 - LogOut
 
 
