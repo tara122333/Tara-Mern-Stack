@@ -1,4 +1,6 @@
 import React from 'react'
+import { useState } from 'react'
+import SignUp from '../Auth/Signup'
 
 const NavbarSM = () =>{
     return(
@@ -7,8 +9,7 @@ const NavbarSM = () =>{
         </>
     )
 }
-const NavbarLg = () =>{
-
+const NavbarLg = ({SignIn,SignUp}) =>{
     return(
         <>
             <div className='flex justify-between items-center bg-purple-500 w-full px-10 py-2'>
@@ -34,14 +35,12 @@ const NavbarLg = () =>{
                                 </h3>
                             </a>
                         </div>   */}
+                         
+                    </div>
                         <div className='flex items-center gap-4'>
                             <button className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign In</button>
-                            <button className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Up</button>
-                        </div>    
-                    </div>
-                    <div>
-
-                    </div>
+                            <button onClick={SignUp} className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Up</button>
+                        </div> 
                 </div>
             </div>
         </>
@@ -49,13 +48,17 @@ const NavbarLg = () =>{
 }
 
 const Navbar = () => {
+    const [openSignup, setOpenSignup] = useState(false);
+
+    const openSignUpmodal = () => setOpenSignup(true); 
   return (
     <>
+        <SignUp isOpen={openSignup} setIsOpen={setOpenSignup}/>
         <div className='flex lg:hidden'>
             <NavbarSM />
         </div>
-        <div className='hidden lg:flex' >
-            <NavbarLg />
+        <div className='hidden lg:flex'>
+            <NavbarLg SignUp={openSignUpmodal} />
         </div>
     </>
   )
