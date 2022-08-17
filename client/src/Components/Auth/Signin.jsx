@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 
 import { signIn } from '../../Redux/Reducer/Auth/auth.action';
@@ -11,11 +11,17 @@ export default function SignIn({isOpen,setIsOpen}) {
         setIsOpen(false)
     }
 
+    
+
     const [userData,setUserData] = useState({
         email:'',
         password:'',
       });
-  
+
+      const reduxState = useSelector((global) => 
+        global.user.user
+    );
+    console.log(reduxState);
       const handleChange = (e) =>{
           setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
       }
@@ -23,7 +29,6 @@ export default function SignIn({isOpen,setIsOpen}) {
       const [errorField,setErrorFields] = useState({
         passwordErr : "",
         emailErr : ""
-    
       });
 
     const dispatch = useDispatch();
@@ -42,6 +47,7 @@ export default function SignIn({isOpen,setIsOpen}) {
             dispatch(signIn(userData));
             alert("Login Success");
             closeModal();
+            window.location.reload();
 
         }
         else{
@@ -66,6 +72,8 @@ export default function SignIn({isOpen,setIsOpen}) {
             }
             return formIsValid;
       }
+
+
 
   return (
     <>

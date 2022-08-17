@@ -56,9 +56,10 @@ export default function SignUp({isOpen,setIsOpen}) {
       dispatch(signUp(userData));
       closeModal();
       alert("user added success");
-      setTimeout(() => {
-        openSignInmodal();
-      }, 500);
+      window.location.reload();
+      // setTimeout(() => {
+      //   openSignInmodal();
+      // }, 500);
     }
     else{
       alert("Please fill all the details");

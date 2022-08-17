@@ -2,7 +2,8 @@ import React from 'react'
 import { useState } from 'react'
 import SignUp from '../Auth/Signup'
 import SignIn from '../Auth/Signin'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { signOut } from '../../Redux/Reducer/Auth/auth.action'
 
 const NavbarSM = () =>{
     return(
@@ -12,10 +13,13 @@ const NavbarSM = () =>{
     )
 }
 const NavbarLg = ({SignIn,SignUp}) =>{
-    const reduxState = useSelector((global) => 
-        console.log(global)
-    );
-    console.log(reduxState);
+    const reduxState = useSelector((global) => global.user.user);
+
+    const dispatch = useDispatch();
+    const SignOUT = () =>{
+        dispatch(signOut());
+    }
+
     return(
         <>
             <div className='flex justify-between items-center bg-purple-500 w-full px-10 py-2'>
@@ -43,10 +47,33 @@ const NavbarLg = ({SignIn,SignUp}) =>{
                         </div>   */}
                          
                     </div>
-                        <div className='flex items-center gap-4'>
-                            <button className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500' onClick={SignIn}>Sign In</button>
-                            <button onClick={SignUp} className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Up</button>
-                        </div> 
+
+                        {
+                            reduxState?.user?.fullname ? (
+                                <>
+                                    <div className='flex items-center gap-10'>
+                                    <div className='text-2xl font-bold text-white'>
+                                        {
+                                            reduxState.user.fullname
+                                        }
+                                    </div>
+                                    <div>
+                                        <button onClick={SignOUT} className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Out</button>
+                                    </div>
+                                    </div>
+
+                                </>
+                            ) :
+                            (
+                                <>
+                                <div className='flex items-center gap-4'>
+                                    <button className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500' onClick={SignIn}>Sign In</button>
+                                    <button onClick={SignUp} className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Up</button>
+                                </div> 
+                                </>
+                            ) 
+                        }
+                        
                 </div>
             </div>
         </>
