@@ -49,7 +49,7 @@ const NavbarLg = ({SignIn,SignUp}) =>{
                     </div>
 
                         {
-                            reduxState?.user?.fullname ? (
+                            reduxState?.user?.email ? (
                                 <>
                                     <div className='flex items-center gap-10'>
                                     <div className='text-2xl font-bold text-white'>

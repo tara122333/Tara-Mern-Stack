@@ -18,6 +18,7 @@ body      from, to, subject, text
 Router.post("/", async (req, res) => {
   try {
     // the mailData object should contain exact properties as below.
+    console.log(req.body.mailData);
     const { from, to, subject, text } = req.body.mailData;
 
     // Initializing mailgun library
