@@ -9,7 +9,6 @@ import React, { useEffect } from "react";
 import { getMyself } from "./Redux/Reducer/User/user.action";
 
 
-
 if (localStorage.zomatoUser) {
   const { token } = JSON.parse(localStorage.zomatoUser);
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;

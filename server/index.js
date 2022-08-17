@@ -1,3 +1,4 @@
+require("dotenv").config();
 import express from 'express';
 import passport from 'passport';
 
@@ -19,6 +20,7 @@ const app = express();
 // API
 import Auth from './API/Auth/index';
 import User from './API/User/index';
+import Mail from './API/Mail/index';
 
 
 // middlewares
@@ -40,6 +42,7 @@ routeConfig(passport);
 // SetRouter
 app.use("/auth",Auth);
 app.use("/user",User);
+app.use("/mail",Mail);
 
 // Router
 app.get("/",(req,res)=>{

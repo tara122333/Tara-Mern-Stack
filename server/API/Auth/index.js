@@ -24,6 +24,15 @@ Router.post("/signup",async(req,res)=>{
         res.status(501).json({Error : error.message});
     }
 })
+
+
+/* 
+method = post
+access = public
+params = none
+url = /signin
+des = signin with email and password
+*/
 Router.post("/signin",async(req,res)=>{
     try {
         // req.body.credentials
@@ -37,7 +46,46 @@ Router.post("/signin",async(req,res)=>{
 })
 
 
-// bcrypt password
+
+
+// /* 
+// route      ==> /google
+// method     ==> GET
+// Des        ==> Google signin
+// params     ==> none
+// Access     ==> public
+// */
+// Router.get("/google",
+//     passport.authenticate("google",{
+//         scope: [
+//             "https://www.googleapis.com/auth/userinfo.profile",
+//             "https://www.googleapis.com/auth/userinfo.email",
+//             "https://www.googleapis.com/auth/user.phonenumbers.read"
+//         ],
+//     }
+// ));
+
+
+
+// /*
+// route      ==> /google/callback
+// method     ==> GET
+// Des        ==> Google signin callback
+// params     ==> none
+// Access     ==> public
+// */
+
+
+// Router.get(
+//     "/google/callback",
+//     passport.authenticate("google", { failureRedirect: "/" }),
+//     (req, res) => {
+//       // Successful authentication, redirect home.
+//       return res.redirect(
+//         `http://localhost:3000/google/${req.session.passport.user.token}`
+//       );
+//     }
+//   );
 
 
 export default Router;

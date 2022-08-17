@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 // Redux types
-import { SIGN_UP,SIGN_IN,SIGN_OUT } from "./auth.type";
+import { SIGN_UP,SIGN_IN,SIGN_OUT,GOOGLE_AUTH } from "./auth.type";
 
 // redux actions
 import { getMyself,clearUser } from "../User/user.action";
@@ -56,6 +56,19 @@ export const signOut = () => async (dispatch) => {
     window.location.href = `http://localhost:3000`;
     
     return dispatch({ type: SIGN_OUT, payload: {} });
+  } catch (error) {
+    return dispatch({ type: "ERROR", payload: error });
+  }
+};
+
+
+export const googleAuth = (token) => async (dispatch) => {
+  try {
+    localStorage.setItem("zomatoUser", JSON.stringify({ token }));
+
+    await getMyself();
+
+    return dispatch({ type: GOOGLE_AUTH, payload: {} });
   } catch (error) {
     return dispatch({ type: "ERROR", payload: error });
   }
