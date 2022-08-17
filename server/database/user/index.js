@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const UserSchema = mongoose.Schema({
@@ -42,11 +42,11 @@ UserSchema.statics.fineByEmailAndPassword = async ({email,password}) => {
 }
 
 // Token Generate
-UserSchema.methods.generateAuthToken = function(){
-    const token = Jwt.sign({
+UserSchema.methods.generateAuthToken =  function(){
+    const token = jwt.sign({
         user : this._id.toString(),
     },
-        "thisistarachandkumawatisgoodboy"
+        "zomatoUser"
     );
 
     return token;

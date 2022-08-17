@@ -9,14 +9,15 @@ const JWTStratergy = JwtPassport.Strategy;
 const ExtractJwt = JwtPassport.ExtractJwt;
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = 'yhisdjbsdkjvbksdjbvksjbvkdsjb';
+opts.secretOrKey = 'zomatoUser';
 
 export default (passport) => {
   passport.use(
     new JWTStratergy(opts, async (jwt__payload /* it is data */, done) => {
       try {
-        const doesUserExist = await UserModel.findById(jwt__payload.user);
-        console.log(doesUserExist);
+        console.log(jwt__payload.user); // done
+        const doesUserExist = await UserModel.findOne({_id : jwt__payload.user});
+        console.log(doesUserExist); //done
         if (!doesUserExist) return done(null, false);
         return done(null, doesUserExist);
       } catch (error) {
@@ -24,4 +25,6 @@ export default (passport) => {
       }
     })
   );
+  passport.serializeUser((userData,done)=> done(null,{...userData}));
+  passport.deserializeUser((id,done)=>done(null,id));
 };
