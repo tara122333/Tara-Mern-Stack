@@ -1,33 +1,104 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
+import SignIn from './Signin';
+
+
+import { useDispatch } from "react-redux";
+
+import { signUp } from "../../Redux/Reducer/Auth/auth.action";
+
+
 export default function SignUp({isOpen,setIsOpen}) {
 
+  const [openSignin, setOpenSignin] = useState(false);
+  const openSignInmodal = () => setOpenSignin(true);
+
     const [userData,setUserData] = useState({
-        fullname : "",
-        password : "",
-        email : ""
+      fullname:'',
+      email:'',
+      password:'',
     });
 
     const handleChange = (e) =>{
         setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+        
     }
+
+    const dispatch = useDispatch();
 
   function closeModal() {
     setIsOpen(false)
   }
 
+  const [errorField,setErrorFields] = useState({
+    fullnameErr : "",
+    passwordErr : "",
+    emailErr : ""
+
+  });
+
+
   const submit = () => {
-    setUserData({
-      email: "",
-      password: "",
-      fullname: "",
-    });
+    
+    setErrorFields({
+      fullnameErr : "",
+      passwordErr : "",
+      emailErr : ""
+  })
+    
+    if(validationData()){
+      setUserData({
+        email: "",
+        password: "",
+        fullname: "",
+      });
+      dispatch(signUp(userData));
+      closeModal();
+      alert("user added success");
+      setTimeout(() => {
+        openSignInmodal();
+      }, 500);
+    }
+    else{
+      alert("Please fill all the details");
+    }
   };
+
+  const validationData = ()=>{
+
+    let formIsValid = true;
+        if(userData.fullname === ''){
+            formIsValid = false;
+            setErrorFields(prevState=>({
+                ...prevState,fullnameErr:"please enter your name",
+            }));
+        }
+        if(userData.email === ''){
+            formIsValid = false;
+            setErrorFields(prevState=>({
+                ...prevState,emailErr:"please enter your mail",
+            }));
+        }
+        if(userData.password === '' ){
+            formIsValid = false;
+            setErrorFields(prevState=>({
+                ...prevState,passwordErr:"please enter your password",
+            }));
+        }
+        if(userData.password !== '' && userData.password.length < 5 ){
+            formIsValid = false;
+            setErrorFields(prevState=>({
+                ...prevState,passwordErr:"please enter your password at least 5",
+            }));
+        }
+        return formIsValid;
+  }
 
 
   return (
     <>
+      <SignIn isOpen={openSignin} setIsOpen={setOpenSignin}/>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -74,7 +145,12 @@ export default function SignUp({isOpen,setIsOpen}) {
                             placeholder="Tara Chand Kumawat"
                             className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:outline-none focus:border-red-500"
                             />
+                            {
+                          errorField.fullnameErr.length > 0 && <span>{errorField.fullnameErr}</span>
+                        }
+
                         </div>
+                              
                         <div className=" w-full flex flex-col gap-2">
                             <label htmlFor="email">Email</label>
                             <input type="text" name="email"
@@ -84,7 +160,11 @@ export default function SignUp({isOpen,setIsOpen}) {
                             placeholder="tara@emai.com"
                             className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:outline-none focus:border-red-500"
                             />
+                            {
+                          errorField.emailErr.length > 0 && <span>{errorField.emailErr}</span>
+                          }
                         </div>
+                        
                         <div className="w-full flex flex-col gap-2">
                             <label htmlFor="password">Password</label>
                             <input
@@ -96,7 +176,11 @@ export default function SignUp({isOpen,setIsOpen}) {
                                 onChange={handleChange}
                                 className="w-full border border-gray-400 px-3 py-2 rounded-lg focus:outline-none focus:border-red-500"
                             />
+                            {
+                          errorField.passwordErr.length > 0 && <span>{errorField.passwordErr}</span>
+                          }
                         </div>
+                        
                         <div className="w-full  text-center bg-red-500 text-white py-2 rounded-lg cursor-pointer" onClick={submit}>
                             Sign Up
                         </div>

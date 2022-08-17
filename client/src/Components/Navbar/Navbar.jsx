@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import SignUp from '../Auth/Signup'
+import SignIn from '../Auth/Signin'
+import { useSelector } from 'react-redux'
 
 const NavbarSM = () =>{
     return(
@@ -10,6 +12,10 @@ const NavbarSM = () =>{
     )
 }
 const NavbarLg = ({SignIn,SignUp}) =>{
+    const reduxState = useSelector((global) => 
+        console.log(global)
+    );
+    console.log(reduxState);
     return(
         <>
             <div className='flex justify-between items-center bg-purple-500 w-full px-10 py-2'>
@@ -38,7 +44,7 @@ const NavbarLg = ({SignIn,SignUp}) =>{
                          
                     </div>
                         <div className='flex items-center gap-4'>
-                            <button className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign In</button>
+                            <button className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500' onClick={SignIn}>Sign In</button>
                             <button onClick={SignUp} className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Up</button>
                         </div> 
                 </div>
@@ -49,16 +55,19 @@ const NavbarLg = ({SignIn,SignUp}) =>{
 
 const Navbar = () => {
     const [openSignup, setOpenSignup] = useState(false);
+    const [openSignin, setOpenSignin] = useState(false);
 
     const openSignUpmodal = () => setOpenSignup(true); 
+    const openSignInmodal = () => setOpenSignin(true);
   return (
     <>
         <SignUp isOpen={openSignup} setIsOpen={setOpenSignup}/>
+        <SignIn isOpen={openSignin} setIsOpen={setOpenSignin}/>
         <div className='flex lg:hidden'>
             <NavbarSM />
         </div>
         <div className='hidden lg:flex'>
-            <NavbarLg SignUp={openSignUpmodal} />
+            <NavbarLg SignUp={openSignUpmodal} SignIn={openSignInmodal} />
         </div>
     </>
   )

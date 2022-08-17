@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 const UserSchema = mongoose.Schema({
     fullname : {
@@ -15,13 +17,15 @@ const UserSchema = mongoose.Schema({
     phoneNumber : {
         type : Number,
     }
+},{
+    timestamps:true
 });
 
 
 UserSchema.statics.fineByEmailAndMobile = async({email,phoneNumber}) => {
     const checkEmail = await UserModel.findOne({email});
-    const checkPhone = await UserModel.findOne({phoneNumber});
-    if(checkEmail || checkPhone){
+    // const checkPhone = await UserModel.findOne({phoneNumber});
+    if(checkEmail){
         throw new Error("User already exits...."); 
     }
     
@@ -32,12 +36,36 @@ UserSchema.statics.fineByEmailAndMobile = async({email,phoneNumber}) => {
 UserSchema.statics.fineByEmailAndPassword = async ({email,password}) => {
     const checkEmail = await UserModel.findOne({email});
     if(!checkEmail) throw new Error("User not exist");
-    else{
-        if(checkEmail.password === password){
-            return checkEmail;
-        }
-        throw new Error("password are not matches");
-    }
+    const isMatch = await bcrypt.compare(password,checkEmail.password);
+    if(!isMatch) throw new Error("password does not match");
+    return checkEmail;
 }
+
+// Token Generate
+UserSchema.methods.generateAuthToken = function(){
+    const token = Jwt.sign({
+        user : this._id.toString(),
+    },
+        "thisistarachandkumawatisgoodboy"
+    );
+
+    return token;
+}
+
+// bcrypt Password
+UserSchema.pre("save",function(next){
+    const user = this;
+    if(!user.isModified("password")) return next();
+    const Round = 8;
+    bcrypt.genSalt(Round,(err,salt)=>{
+        if(err) return next(err);
+        bcrypt.hash(user.password,salt,(err,hash)=>{
+            if(err) return next(err);
+            user.password = hash;
+            return next();
+        })
+    })
+})
+
 
 export const UserModel = mongoose.model("user",UserSchema);
