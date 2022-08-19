@@ -1,8 +1,46 @@
+require("dotenv").config();
 import express from "express";
 import { UserModel } from "../../database";
 import { OTPModel } from "../../database/OTP";
+import nodemailer from 'nodemailer';
+import uuid4 from "uuid4";
+
 
 const Router = express.Router();
+
+let tranporter = nodemailer.createTransport({
+    service : "gmail",
+    secure: true,
+    auth : {
+        user : process.env.AUTH_EMAIL,
+        pass : process.env.AUTH_PASS,
+    }
+});
+
+tranporter.verify((error,success)=>{
+    if(error){
+        console.log("nodemailer verify error " + error);
+    }
+    else{
+        console.log("ready to send email");
+        console.log("success");
+    }
+});
+const sendvarificationEmail = (({_id,email},res)=>{
+    const currentUrl = "http://localhost:4000/";
+
+    const mailOption = {
+        from : process.env.AUTH_EMAIL,
+        to : email,
+        subject : "Email Varification",
+        html : "Good For me"
+    };
+    tranporter.sendMail(mailOption).then(()=>{
+        console.log("mail sent");
+    }).catch((error)=>{
+        console.log("mail sent error" + error);
+    });
+})
 
 /* 
 method = post
@@ -17,15 +55,16 @@ Router.post("/signup",async(req,res)=>{
         // req.body.credentials
         await UserModel.fineByEmailAndMobile(req.body.credentials);
         const user = await UserModel.create(req.body.credentials);
-        const otp = Math.floor((Math.random() * 100000)+ 1);
-        const now = new Date();
-        const time = now.getTime();
-        const expireTime = time + 1000 * 300;
-        const otpdata = await OTPModel.create({
-            otp : otp,
-            email : user.email,
-            exp : expireTime
-        });
+        // const otp = Math.floor((Math.random() * 100000)+ 1);
+        // const now = new Date();
+        // const time = now.getTime();
+        // const expireTime = time + 1000 * 300;
+        // const otpdata = await OTPModel.create({
+        //     otp : otp,
+        //     email : user.email,
+        //     exp : expireTime
+        // });
+        // sendvarificationEmail(req.body.credentials);
         const token = user.generateAuthToken();
         res.status(200).json({user,token,message : "Success Signup",status : "success"});
     } catch (error) {
