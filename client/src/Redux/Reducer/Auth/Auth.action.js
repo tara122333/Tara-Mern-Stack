@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 // Redux types
-import { SIGN_UP,SIGN_IN,SIGN_OUT,GOOGLE_AUTH } from "./auth.type";
+import { SIGN_UP,SIGN_IN,SIGN_OUT,GOOGLE_AUTH,OTP } from "./auth.type";
 
 // redux actions
 import { getMyself,clearUser } from "../User/user.action";
@@ -15,7 +15,7 @@ export const signUp = (userData) => async (dispatch) => {
       data: { credentials: userData },
     });
 
-    await getMyself();
+    getMyself();
 
     localStorage.setItem(
       "zomatoUser",
@@ -36,7 +36,7 @@ export const signIn = (userData) => async (dispatch) => {
       data: { credentials: userData },
     });
 
-    await getMyself();
+    getMyself();
 
     localStorage.setItem(
       "zomatoUser",
@@ -44,6 +44,26 @@ export const signIn = (userData) => async (dispatch) => {
     );
 
     return dispatch({ type: SIGN_IN, payload: User.data });
+  } catch (error) {
+    return dispatch({ type: "ERROR", payload: error });
+  }
+};
+export const UserOTP = (otpData) => async (dispatch) => {
+  try {
+    const Otp = await axios({
+      method: "POST",
+      url: `http://localhost:4000/auth/otp`,
+      data: { otpData: otpData },
+    });
+
+    getMyself();
+
+    localStorage.setItem(
+      "zomatoUser",
+      JSON.stringify({ token: Otp.data })
+    );
+
+    return dispatch({ type: OTP, payload: Otp.data });
   } catch (error) {
     return dispatch({ type: "ERROR", payload: error });
   }

@@ -1,4 +1,4 @@
-import { SIGN_UP,SIGN_IN, GOOGLE_AUTH } from "./auth.type";
+import { SIGN_UP,SIGN_IN, GOOGLE_AUTH,OTP } from "./auth.type";
 const INITIAL_STATE = {};
 
 const AuthReducer = (state = INITIAL_STATE, action) => {
@@ -13,6 +13,10 @@ const AuthReducer = (state = INITIAL_STATE, action) => {
         ...state,
       };
     case GOOGLE_AUTH:
+      return {
+        ...state,
+      };
+    case OTP:
       return {
         ...state,
       };

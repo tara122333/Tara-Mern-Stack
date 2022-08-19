@@ -1,5 +1,6 @@
 import express from "express";
 import { UserModel } from "../../database";
+import { OTPModel } from "../../database/OTP";
 
 const Router = express.Router();
 
@@ -16,9 +17,16 @@ Router.post("/signup",async(req,res)=>{
         // req.body.credentials
         await UserModel.fineByEmailAndMobile(req.body.credentials);
         const user = await UserModel.create(req.body.credentials);
-        // console.log(user);
+        const otp = Math.floor((Math.random() * 100000)+ 1);
+        const now = new Date();
+        const time = now.getTime();
+        const expireTime = time + 1000 * 300;
+        const otpdata = await OTPModel.create({
+            otp : otp,
+            email : user.email,
+            exp : expireTime
+        });
         const token = user.generateAuthToken();
-        console.log(token);
         res.status(200).json({user,token,message : "Success Signup",status : "success"});
     } catch (error) {
         res.status(501).json({Error : error.message});
@@ -40,6 +48,25 @@ Router.post("/signin",async(req,res)=>{
         const token = user.generateAuthToken();
         // console.log(user);
         res.status(200).json({user,token, message : "user login success" , status : "success"});
+    } catch (error) {
+        res.status(501).json({Error : error.message});
+    }
+})
+
+/* 
+method = post
+access = public
+params = none
+url = /signin
+des = signin with email and password
+*/
+Router.post("/otp",async(req,res)=>{
+    try {
+        console.log(req.body.otpData);
+        const user = await OTPModel.fineByEmailAndOTP();
+        // const token = user.generateAuthToken();
+        // console.log(user);
+        res.status(200).json({ message : "user success" , status : "success"});
     } catch (error) {
         res.status(501).json({Error : error.message});
     }

@@ -2,20 +2,17 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
 
-import OTPModel from './OTP';
+import OtpModel from './OTP';
 
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { signUp } from "../../Redux/Reducer/Auth/auth.action";
-import { mailSend } from '../../Redux/Reducer/Mail/mail.action';
 
 
 export default function SignUp({isOpen,setIsOpen}) {
   const [openOTP, setOpenOTP] = useState(false);
   const openOTPmodal = () => setOpenOTP(true);
-
-    const reduxState = useSelector((global) => global.user.user);
     const [userData,setUserData] = useState({
       fullname:'',
       email:'',
@@ -23,7 +20,7 @@ export default function SignUp({isOpen,setIsOpen}) {
     });
 
     const handleChange = (e) =>{
-        setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+        setUserData({ ...userData, [e.target.id]: e.target.value });
     }
 
     const dispatch = useDispatch();
@@ -31,44 +28,18 @@ export default function SignUp({isOpen,setIsOpen}) {
   function closeModal() {
     setIsOpen(false)
   }
-
   const [errorField,setErrorFields] = useState({
     fullnameErr : "",
     passwordErr : "",
     emailErr : ""
   });
-
-  // const sendMailToUser = () =>{
-  //   setMailData({
-  //     from : "",
-  //     to : userData.email,
-  //     subject : "",
-  //     text : ""
-  //   })
-  // }
-
-  
-
-  const [mailData,setMailData] = useState({
-    from : "Mailgun Sandbox <postmaster@sandbox9634ec1a25de49da8c5c028a23cba404.mailgun.org>",
-    to : reduxState?.user?.email ? reduxState.user.email : userData.email,
-    subject : "OTP",
-    text : "54623"
-  })
   
   const submit = () => {
-    
     setErrorFields({
       fullnameErr : "",
       passwordErr : "",
       emailErr : ""
     })
-    setMailData(
-      (prev) => ({
-        ...prev,
-      to : userData.email
-    }));
-    console.log(userData);
     
     if(validationData()){
       setUserData({
@@ -76,23 +47,12 @@ export default function SignUp({isOpen,setIsOpen}) {
         password: "",
         fullname: "",
       });
-
-      // Mailgun Sandbox <postmaster@sandbox9634ec1a25de49da8c5c028a23cba404.mailgun.org>
-      
-
+      console.log(userData);
       dispatch(signUp(userData));
-      console.log(mailData);
-      // setMailData({
-      //   from : "Mailgun Sandbox <postmaster@sandbox9634ec1a25de49da8c5c028a23cba404.mailgun.org>",
-      //   to : "2020pceittara61@poornima.org",
-      //   subject : "OPT",
-      //   text : "4213"
-      // });
-      // sendMailToUser();
-      // dispatch(mailSend(mailData));
-      // console.log(mailData);
       closeModal();
       openOTPmodal();
+      alert("please check your mail");
+      // window.location.reload();
     }
     else{
       alert("Please fill all the details");
@@ -133,7 +93,7 @@ export default function SignUp({isOpen,setIsOpen}) {
   return (
     <>
 
-      <OTPModel isOpen={openOTP} setIsOpen={setOpenOTP}/>
+      <OtpModel isOpen={openOTP} setIsOpen={setOpenOTP}/>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -218,6 +178,9 @@ export default function SignUp({isOpen,setIsOpen}) {
                         
                         <div className="w-full  text-center bg-red-500 text-white py-2 rounded-lg cursor-pointer" onClick={submit}>
                             Sign Up
+                        </div>
+                        <div className="w-full  text-center bg-red-500 text-white py-2 rounded-lg cursor-pointer" onClick={()=>{openOTPmodal()}}>
+                            OTP
                         </div>
                     </form>
                   </diV>

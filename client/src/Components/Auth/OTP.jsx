@@ -1,25 +1,31 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 
-export default function OTPModel({isOpen,setIsOpen}) {
+import { UserOTP } from '../../Redux/Reducer/Auth/auth.action';
 
+export default function OtpModel({isOpen,setIsOpen}){
+
+  const reduxState = useSelector((global) => global.user.user);
+    console.log(reduxState);
+    
+  const dispatch = useDispatch();
   function closeModal() {
     setIsOpen(true)
   }
   function cancleModal() {
     setIsOpen(false)
   }
-
   const [otpData,setOtpData] = useState({
-    otp:''
+    otp:'',
+    email : '',
   });
 
   const handleChange = (e) =>{
-    setOtpData((prev) => ({ ...prev, [e.target.id]: e.target.value }));   
+    setOtpData({ ...otpData, [e.target.id]: e.target.value }); 
   }
   const [errorField,setErrorFields] = useState({
     otpErr : "",
-
   });
 
   const submit = ()=>{
@@ -27,7 +33,7 @@ export default function OTPModel({isOpen,setIsOpen}) {
         otpErr : ""
     })
     if(validationData()){
-
+      dispatch(UserOTP(otpData));
     }
   }
 

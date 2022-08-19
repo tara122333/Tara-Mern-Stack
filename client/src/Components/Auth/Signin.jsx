@@ -10,9 +10,6 @@ export default function SignIn({isOpen,setIsOpen}) {
     function closeModal() {
         setIsOpen(false)
     }
-
-    
-
     const [userData,setUserData] = useState({
         email:'',
         password:'',

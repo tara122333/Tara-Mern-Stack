@@ -14,6 +14,7 @@ const NavbarSM = () =>{
 }
 const NavbarLg = ({SignIn,SignUp}) =>{
     const reduxState = useSelector((global) => global.user.user);
+    console.log(reduxState);
 
     const dispatch = useDispatch();
     const SignOUT = () =>{
