@@ -17,8 +17,9 @@ const UserSchema = mongoose.Schema({
     phoneNumber : {
         type : Number,
     },
-    varification : {
+    varified : {
         type:Boolean,
+        default:false,
     }
 },{
     timestamps:true

@@ -1,9 +1,10 @@
 require("dotenv").config();
 import express from "express";
-import { UserModel } from "../../database";
+import { UserModel, UserVerificationModel } from "../../database";
 import { OTPModel } from "../../database/OTP";
 import nodemailer from 'nodemailer';
-import uuid4 from "uuid4";
+import {uuid4} from "uuid4";
+import bcrypt from 'bcryptjs';
 
 
 const Router = express.Router();
@@ -28,19 +29,123 @@ tranporter.verify((error,success)=>{
 });
 const sendvarificationEmail = (({_id,email},res)=>{
     const currentUrl = "http://localhost:4000/";
+    const uId = "4521354tara151";
+    const uniqueString = uId + _id;
+    // console.log(uniqueString);
 
     const mailOption = {
         from : process.env.AUTH_EMAIL,
         to : email,
         subject : "Email Varification",
-        html : "Good For me"
+        // html : `<p>
+        // Email Varification <br>
+        // <a href=${currentUrl}>
+        //     Varifiy
+        // </a>
+        // </p>`
+        html : `<p>
+        Email Varification <br>
+        <a href=${currentUrl + "auth/verify/" + _id + "/" + uniqueString}>
+            Varifiy
+        </a>
+        </p>`
     };
-    tranporter.sendMail(mailOption).then(()=>{
-        console.log("mail sent");
+    const saltRound = 10;
+    bcrypt.hash(uniqueString,saltRound).then((hashUniqueString)=>{
+        const newVarification = new UserVerificationModel({
+            userId : _id,
+            uniqueString : hashUniqueString,
+            createdAt : Date.now(),
+            expireAt : Date.now() + 300000,
+        });
+        newVarification.save().then(()=>{
+            tranporter.sendMail(mailOption).then(()=>{
+                console.log("mail sent and record save ||");
+            }).catch((error)=>{
+                console.log("mail sent error" + error);
+                res.status(501).json({Error : error.message});
+            });
+        }).catch((error)=>{
+            res.status(501).json({Error : error.message});
+        })
     }).catch((error)=>{
-        console.log("mail sent error" + error);
-    });
+        console.log("error in hashing data");
+        res.status(501).json({Error : error.message});
+    })
+    
 })
+
+
+
+
+
+/* 
+method = get
+access = public
+params = userId and uniqueString
+url = /verify
+des = varification using email link
+*/
+
+Router.get("/verify/:userId/:uniqueString",(req,res)=>{
+    let {userId,uniqueString} = req.params;
+    UserVerificationModel.find({userId}).then((result)=>{
+        if(result.length > 0){
+            const {expireAt} = result[0];
+            const hashUniqueString = result[0].uniqueString;
+            if(expireAt < Date.now()){
+                UserVerificationModel.deleteOne({userId}).then((result)=>{
+                    UserModel.deleteOne({_id : userId}).then(()=>{
+                        console.log("user users database has been cleaning");
+                    }).catch((error)=>{
+                        console.log("users database not clearing for expire time");
+                    res.status(501).json({Error : error.message});
+                    })
+
+                }).catch((error)=>{
+                    console.log("user not clearing");
+                    res.status(501).json({Error : error.message});
+                })
+            }
+            else{
+                bcrypt.compare(uniqueString,hashUniqueString).then((result)=>{
+
+                    if(result){
+                        UserModel.updateOne({_id:userId},{
+                            varified : true
+                        }).then(()=>{
+                            console.log("user successfully verified");
+                            res.status(200).json({
+                                message : "Success Verification"
+                            });
+                        }).catch((error)=>{
+                            console.log("user not update for varification");
+                            res.status(501).json({Error : error.message});
+                        })
+                    }
+                    else{
+                        console.log("verification passed check your mail");
+                    }
+
+                }).catch((error)=>{
+                    console.log("user uniqueString not matches");
+                    res.status(501).json({Error : error.message});
+                })
+            }
+        }
+        else{
+            console.log("data has been don't exist or already verified");
+        }
+
+
+    }).catch((error)=>{
+        console.log("user not exist");
+        res.status(501).json({Error : error.message});
+    });
+});
+
+
+
 
 /* 
 method = post
@@ -64,8 +169,8 @@ Router.post("/signup",async(req,res)=>{
         //     email : user.email,
         //     exp : expireTime
         // });
-        // sendvarificationEmail(req.body.credentials);
         const token = user.generateAuthToken();
+        sendvarificationEmail(user);
         res.status(200).json({user,token,message : "Success Signup",status : "success"});
     } catch (error) {
         res.status(501).json({Error : error.message});
