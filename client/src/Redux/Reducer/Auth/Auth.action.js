@@ -21,7 +21,6 @@ export const signUp = (userData) => async (dispatch) => {
       "zomatoUser",
       JSON.stringify({ token: User.data.token })
     );
-
     return dispatch({ type: SIGN_UP, payload: User.data });
   } catch (error) {
     return dispatch({ type: "ERROR", payload: error });

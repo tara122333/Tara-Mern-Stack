@@ -4,7 +4,6 @@ import SignUp from '../Auth/Signup'
 import SignIn from '../Auth/Signin'
 import { useDispatch, useSelector } from 'react-redux'
 import { signOut } from '../../Redux/Reducer/Auth/auth.action'
-
 const NavbarSM = () =>{
     return(
         <>
@@ -50,7 +49,7 @@ const NavbarLg = ({SignIn,SignUp}) =>{
                     </div>
 
                         {
-                            reduxState?.user?.email ? (
+                            reduxState?.user?.varified ? (
                                 <>
                                     <div className='flex items-center gap-10'>
                                     <div className='text-2xl font-bold text-white'>
@@ -92,7 +91,7 @@ const Navbar = () => {
         <SignUp isOpen={openSignup} setIsOpen={setOpenSignup}/>
         <SignIn isOpen={openSignin} setIsOpen={setOpenSignin}/>
         <div className='flex lg:hidden'>
-            <NavbarSM />
+        <NavbarLg SignUp={openSignUpmodal} SignIn={openSignInmodal} />
         </div>
         <div className='hidden lg:flex'>
             <NavbarLg SignUp={openSignUpmodal} SignIn={openSignInmodal} />

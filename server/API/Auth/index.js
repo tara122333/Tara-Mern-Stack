@@ -37,16 +37,10 @@ const sendvarificationEmail = (({_id,email},res)=>{
         from : process.env.AUTH_EMAIL,
         to : email,
         subject : "Email Varification",
-        // html : `<p>
-        // Email Varification <br>
-        // <a href=${currentUrl}>
-        //     Varifiy
-        // </a>
-        // </p>`
         html : `<p>
         Email Varification <br>
         <a href=${currentUrl + "auth/verify/" + _id + "/" + uniqueString}>
-            Varifiy
+        ${currentUrl + "auth/verify/" + _id + "/" + uniqueString}
         </a>
         </p>`
     };
@@ -76,8 +70,53 @@ const sendvarificationEmail = (({_id,email},res)=>{
 })
 
 
+const sendvarificationEmail12 = async({_id,email}) =>{
+    try {
+        const currentUrl = "http://localhost:4000/";
+        const uId = "4521354tara151";
+        const uniqueString = uId + _id;
 
+        const mailOption = {
+            from : process.env.AUTH_EMAIL,
+            to : email,
+            subject : "Email Varification",
+            html : `<p>
+            Email Varification <br>
+            <a href=${currentUrl + "auth/verify/" + _id + "/" + uniqueString}>
+            ${currentUrl + "auth/verify/" + _id + "/" + uniqueString}
+            </a>
+            </p>`
+        };
 
+        const saltRound = 10;
+
+        bcrypt.genSalt(saltRound,(err,salt)=>{
+            if(err) return err;
+            bcrypt.hash(user.password,salt,(err,hashUniqueString)=>{
+                if(err) return err;
+                const newVarification = new UserVerificationModel({
+                    userId : _id,
+                    uniqueString : hashUniqueString,
+                    createdAt : Date.now(),
+                    expireAt : Date.now() + 300000,
+                });
+                const verifyData = newVarification.save();
+                console.log("varification data is : ");
+                console.log(verifyData);
+                tranporter.sendMail(mailOption).then(()=>{
+                    console.log("mail sent and record save ||");
+                    return verifyData;
+                }).catch((err)=>{
+                    console.log("mail sent error" + err);
+                    return err;
+                });
+            })
+        })
+    } catch (err) {
+        throw new Error(err); 
+    }
+
+}
 
 /* 
 method = get
@@ -86,7 +125,6 @@ params = userId and uniqueString
 url = /verify
 des = varification using email link
 */
-
 Router.get("/verify/:userId/:uniqueString",(req,res)=>{
     let {userId,uniqueString} = req.params;
     UserVerificationModel.find({userId}).then((result)=>{
@@ -115,6 +153,14 @@ Router.get("/verify/:userId/:uniqueString",(req,res)=>{
                             varified : true
                         }).then(()=>{
                             console.log("user successfully verified");
+                            UserModel.findOne({_id : userId}).then((data)=>{
+                                console.log(data);
+                                // const token = data.generateAuthToken();
+                                // console.log(token);
+                            }).catch((error)=>{
+                                console.log("token Not generate");
+                                res.status(501).json({Error : error.message});
+                            })
                             res.status(200).json({
                                 message : "Success Verification"
                             });
@@ -147,6 +193,7 @@ Router.get("/verify/:userId/:uniqueString",(req,res)=>{
 
 
 
+
 /* 
 method = post
 access = public
@@ -154,7 +201,6 @@ params = none
 url = /signup
 des = signup with fullname, email and password
 */
-
 Router.post("/signup",async(req,res)=>{
     try {
         // req.body.credentials
@@ -169,8 +215,9 @@ Router.post("/signup",async(req,res)=>{
         //     email : user.email,
         //     exp : expireTime
         // });
-        const token = user.generateAuthToken();
         sendvarificationEmail(user);
+        const token = user.generateAuthToken();
+        // console.log(user);
         res.status(200).json({user,token,message : "Success Signup",status : "success"});
     } catch (error) {
         res.status(501).json({Error : error.message});
@@ -189,8 +236,15 @@ Router.post("/signin",async(req,res)=>{
     try {
         // req.body.credentials
         const user = await UserModel.fineByEmailAndPassword(req.body.credentials);
-        const token = user.generateAuthToken();
+        // if(user.varified){
+        //     const token = user.generateAuthToken();
+        //     res.status(200).json({user,token, message : "user login success" , status : "success"});
+        // }
+        // else{
+        //     res.status(200).json({user, message : "user login not success" , status : "fail"});
+        // }
         // console.log(user);
+        const token = user.generateAuthToken();
         res.status(200).json({user,token, message : "user login success" , status : "success"});
     } catch (error) {
         res.status(501).json({Error : error.message});

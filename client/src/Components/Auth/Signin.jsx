@@ -7,6 +7,9 @@ import { signIn } from '../../Redux/Reducer/Auth/auth.action';
 
 export default function SignIn({isOpen,setIsOpen}) {
 
+  // const reduxState = useSelector((global) => global.user.user);
+  // console.log(reduxState);
+
     function closeModal() {
         setIsOpen(false)
     }
@@ -15,10 +18,6 @@ export default function SignIn({isOpen,setIsOpen}) {
         password:'',
       });
 
-      const reduxState = useSelector((global) => 
-        global.user.user
-    );
-    console.log(reduxState);
       const handleChange = (e) =>{
           setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
       }
@@ -42,9 +41,9 @@ export default function SignIn({isOpen,setIsOpen}) {
                 password: "",
               });
             dispatch(signIn(userData));
-            alert("Login Success");
-            closeModal();
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
 
         }
         else{

@@ -1,27 +1,23 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
-
-import OtpModel from './OTP';
-
-
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { signUp } from "../../Redux/Reducer/Auth/auth.action";
-
+import Comformation from './Comformation';
 
 export default function SignUp({isOpen,setIsOpen}) {
-  const [openOTP, setOpenOTP] = useState(false);
-  const openOTPmodal = () => setOpenOTP(true);
+
+  const [openVerified, setOpenVerified] = useState(false);
+  const openVerifiedmodal = () => setOpenVerified(true); 
+
     const [userData,setUserData] = useState({
       fullname:'',
       email:'',
       password:'',
     });
 
-    const handleChange = (e) =>{
-        setUserData({ ...userData, [e.target.id]: e.target.value });
-    }
+    const handleChange = (e) => setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
 
     const dispatch = useDispatch();
 
@@ -40,19 +36,19 @@ export default function SignUp({isOpen,setIsOpen}) {
       passwordErr : "",
       emailErr : ""
     })
-    
     if(validationData()){
       setUserData({
         email: "",
         password: "",
         fullname: "",
       });
+
       console.log(userData);
       dispatch(signUp(userData));
       closeModal();
-      openOTPmodal();
-      alert("please check your mail");
-      // window.location.reload();
+      openVerifiedmodal();
+      
+      // alert("please check your mail");
     }
     else{
       alert("Please fill all the details");
@@ -88,12 +84,11 @@ export default function SignUp({isOpen,setIsOpen}) {
         }
         return formIsValid;
   }
-
+  
 
   return (
     <>
-
-      <OtpModel isOpen={openOTP} setIsOpen={setOpenOTP}/>
+      <Comformation isOpen={openVerified} setIsOpen={setOpenVerified}/>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -178,9 +173,6 @@ export default function SignUp({isOpen,setIsOpen}) {
                         
                         <div className="w-full  text-center bg-red-500 text-white py-2 rounded-lg cursor-pointer" onClick={submit}>
                             Sign Up
-                        </div>
-                        <div className="w-full  text-center bg-red-500 text-white py-2 rounded-lg cursor-pointer" onClick={()=>{openOTPmodal()}}>
-                            OTP
                         </div>
                     </form>
                   </diV>
