@@ -20,6 +20,9 @@ const UserSchema = mongoose.Schema({
     varified : {
         type:Boolean,
         default:false,
+    },
+    profilePic : {
+        type : String,
     }
 },{
     timestamps:true

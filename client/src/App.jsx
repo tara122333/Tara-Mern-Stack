@@ -2,8 +2,10 @@ import DefaultLayout from "./Layout/Default";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import React, { useEffect } from "react";
+import {Route,Routes} from 'react-router-dom';
 
 
+import GoogleAuth from "./Page/GoogleAuth";
 
 // redux action
 import { getMyself } from "./Redux/Reducer/User/user.action";
@@ -28,7 +30,11 @@ function App() {
 
   return (
     <>
-      <DefaultLayout />
+      {/* <DefaultLayout /> */}
+      <Routes>
+        <Route exact path="/" element={<DefaultLayout />} />
+        <Route path="/google/:token" exact element={GoogleAuth} />
+      </Routes>
     </>
   );
 }

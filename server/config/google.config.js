@@ -1,6 +1,6 @@
 // Library
 import googleOAuth from 'passport-google-oauth20';
-import { UserModel } from '../database/allModels';
+import { UserModel } from '../database';
 
 const GoogleStrategy = googleOAuth.Strategy;
 
@@ -20,16 +20,18 @@ export default(passport)=>{
                 fullname:profile.displayName,
                 email:profile.emails[0].value,
                 profilePic : profile.photos[0].value,
+                varified : true,
                 // phoneNumber : profile.ph
             };
-            // console.log(profile.displayName);
-            // console.log(profile.emails[0].value);
-            // console.log(profile.photos[0].value);
+            console.log(profile.displayName);
+            console.log(profile.emails[0].value);
+            console.log(profile.photos[0].value);
+            console.log(newUser);
             try {
                 const user = await UserModel.findOne({email:newUser.email});
-                // console.log(user);
                 if(user){
                     const token = user.generateAuthToken();
+                    console.log(user);
                     done(null,{user,token});
                 }else{
                     

@@ -1,16 +1,16 @@
 require("dotenv").config();
 import express from 'express';
 import passport from 'passport';
+require("./database/connection");
 
 // // database;
-import './database/connection';
-import { UserModel } from './database';
 const session = require('express-session');
 import cors from 'cors';  //cors
 import helmet from 'helmet';  //helmet
 
 
 import routeConfig from './config/route.config';
+import googleAuthConfig from "./config/google.config";
 
 
 // App name
@@ -38,6 +38,7 @@ app.use(passport.session());
 
 
 routeConfig(passport);
+googleAuthConfig(passport);
 
 // SetRouter
 app.use("/auth",Auth);

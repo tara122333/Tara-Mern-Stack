@@ -5,6 +5,7 @@ import { OTPModel } from "../../database/OTP";
 import nodemailer from 'nodemailer';
 import {uuid4} from "uuid4";
 import bcrypt from 'bcryptjs';
+import passport from "passport";
 
 
 const Router = express.Router();
@@ -273,44 +274,44 @@ Router.post("/otp",async(req,res)=>{
 
 
 
-// /* 
-// route      ==> /google
-// method     ==> GET
-// Des        ==> Google signin
-// params     ==> none
-// Access     ==> public
-// */
-// Router.get("/google",
-//     passport.authenticate("google",{
-//         scope: [
-//             "https://www.googleapis.com/auth/userinfo.profile",
-//             "https://www.googleapis.com/auth/userinfo.email",
-//             "https://www.googleapis.com/auth/user.phonenumbers.read"
-//         ],
-//     }
-// ));
+/* 
+route      ==> /google
+method     ==> GET
+Des        ==> Google signin
+params     ==> none
+Access     ==> public
+*/
+Router.get("/google",
+    passport.authenticate("google",{
+        scope: [
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/user.phonenumbers.read"
+        ],
+    }
+));
 
 
 
-// /*
-// route      ==> /google/callback
-// method     ==> GET
-// Des        ==> Google signin callback
-// params     ==> none
-// Access     ==> public
-// */
+/*
+route      ==> /google/callback
+method     ==> GET
+Des        ==> Google signin callback
+params     ==> none
+Access     ==> public
+*/
 
 
-// Router.get(
-//     "/google/callback",
-//     passport.authenticate("google", { failureRedirect: "/" }),
-//     (req, res) => {
-//       // Successful authentication, redirect home.
-//       return res.redirect(
-//         `http://localhost:3000/google/${req.session.passport.user.token}`
-//       );
-//     }
-//   );
+Router.get(
+    "/google/callback",
+    passport.authenticate("google", { failureRedirect: "/" }),
+    (req, res) => {
+      return res.redirect(
+        `http://localhost:3000/google/${req.session.passport.user.token}`
+      );
+    }
+    
+  );
 
 
 export default Router;

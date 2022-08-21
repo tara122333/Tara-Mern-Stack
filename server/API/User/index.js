@@ -14,8 +14,8 @@ body       ==> none
 */
 Router.get("/",passport.authenticate("jwt"), async(req,res)=>{
     try {
-        const { email, fullname, phoneNumber, address ,varified } = req.session.passport.user._doc;
-        return res.json({ user: { email, fullname, phoneNumber, address ,varified} });
+        const { email, fullname, phoneNumber, address ,varified,profilePic } = req.session.passport.user._doc;
+        return res.json({ user: { email, fullname, phoneNumber, address ,varified,profilePic} });
     } catch (error) {
         return res.status(500).json({error : error.message});
     }
