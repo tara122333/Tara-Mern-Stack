@@ -52,11 +52,27 @@ const NavbarLg = ({SignIn,SignUp}) =>{
                             reduxState?.user?.varified ? (
                                 <>
                                     <div className='flex items-center gap-10'>
-                                    <div className='text-2xl font-bold text-white'>
-                                        {
-                                            reduxState.user.fullname
-                                        }
-                                    </div>
+                                    {
+                                        reduxState?.user?.profilePic ? (
+                                            <>
+                                                <div className='w-14 h-14 flex justify-center items-center p-1 bg-red-400 rounded-full'>
+                                                    {/* <img src={reduxState.user.profilePic} alt="avatar"  className='w-full h-full'/> */}
+                                                    {/* <img src="https://lh3.googleusercontent.com/a-/AFdZucoodRTxUPxdQxOKgBwsWWrcJNRBJM69kNtvkwC3nQ=s96-c" alt='new' className='w-full h-full'/> */}
+                                                    <img src={reduxState.user.profilePic} alt="" className='w-full h-full rounded-full' referrerpolicy="no-referrer"/>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className='font-bold rounded-full bg-red-500 text-white flex justify-center items-center h-14 w-14'>
+                                                        <h1 className='px-3 text-3xl'>
+                                                        {
+                                                            reduxState.user.fullname.charAt(0)
+                                                        }
+                                                        </h1>
+                                                </div>
+                                            </>
+                                        )
+                                    }
                                     <div>
                                         <button onClick={SignOUT} className='px-10 py-1 font-semibold text-xl text-white bg-black rounded-lg hover:bg-red-500'>Sign Out</button>
                                     </div>

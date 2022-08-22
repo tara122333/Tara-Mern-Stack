@@ -1,4 +1,3 @@
-import DefaultLayout from "./Layout/Default";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import React, { useEffect } from "react";
@@ -9,6 +8,10 @@ import GoogleAuth from "./Page/GoogleAuth";
 
 // redux action
 import { getMyself } from "./Redux/Reducer/User/user.action";
+
+// components
+import Temp from "./Components/Temp";
+import HomeHOC from "./HOC/Home.HOC";
 
 
 if (localStorage.zomatoUser) {
@@ -30,11 +33,8 @@ function App() {
 
   return (
     <>
-      {/* <DefaultLayout /> */}
-      <Routes>
-        <Route exact path="/" element={<DefaultLayout />} />
-        <Route path="/google/:token" exact element={GoogleAuth} />
-      </Routes>
+        <HomeHOC exact path="/" element={Temp} />
+        <HomeHOC path="/google/:token" exact element={GoogleAuth} />
     </>
   );
 }
